@@ -4,9 +4,9 @@ trigger:
 - none
 
 variables:
-  service-connection: 'Traineeship connection' # replace with your service connection name
-  resource-group: 'MaRi-invest' # replace with your resource group name
-  workspace: 'ML_Mari_invest' # replace with your workspace name
+  service-connection: Traineeship connection 
+  resource-group: MaRi-invest
+  workspace: ML_Mari_invest
 
 jobs:
 - job: SubmitAzureMLJob
