@@ -5,7 +5,7 @@ trigger:
 
 variables:
   subscription_id: 'ac58b4ec-0810-44c4-9167-58a33cd159cd0' # replace with your subscription id
-  service-connection: 'degrootdev (1)' # replace with your generic service connection name
+  service-connection: 'degrootdev' # replace with your generic service connection name
   resource-group: 'MaRi-invest' # replace with your resource group name
   workspace: 'ML_Mari_invest' # replace with your workspace name
 
