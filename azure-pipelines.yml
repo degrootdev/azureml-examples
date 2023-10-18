@@ -4,7 +4,7 @@ trigger:
 - none
 
 variables:
-  service-connection: 'Traineeship(ac58b4ec-0810-44c4-9167-58a33cd159cd)' # replace with your service connection name
+  service-connection: 'Traineeship connection' # replace with your service connection name
   resource-group: 'MaRi-invest' # replace with your resource group name
   workspace: 'ML_Mari_invest' # replace with your workspace name
 
