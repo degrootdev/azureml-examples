@@ -29,7 +29,7 @@ jobs:
           serviceConnection: $(service-connection)
           resourceGroupName: $(resource-group)
           azureMLWorkspaceName: $(workspace)
-          azureMLJobName: submit-azure-machine-learning-job
+          azureMLJobName: $(azureml_job_name_from_submit_job)
   - task: UsePythonVersion@0
     displayName: Use Python >=3.8
     inputs:
