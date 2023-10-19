@@ -46,7 +46,7 @@ jobs:
 - job: WaitForAzureMLJobCompletion
   displayName: Wait for AzureML Job Completion
   pool: server
-  timeoutInMinutes: 0
+  timeoutInMinutes: 2
   dependsOn: SubmitAzureMLJob
   variables: 
     # We are saving the name of azureMl job submitted in previous step to a variable and it will be used as an inut to the AzureML Job Wait task
