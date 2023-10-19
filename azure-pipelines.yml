@@ -52,7 +52,7 @@ jobs:
     displayName: Create online/batch endpoint 
     continueOnError: true
     inputs: 
-      azureSubscription: $(service-connectio) #needs to have access at the RG level 
+      azureSubscription: $(service-connection) #needs to have access at the RG level 
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
