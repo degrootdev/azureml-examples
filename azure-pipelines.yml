@@ -16,18 +16,6 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - checkout: none
-  - task: AzureCLI@2
-    displayName: Install AZ CLI
-    inputs:
-      azureSubscription: $(service-connection)
-      scriptType: bash
-      scriptLocation: inlineScript
-      workingDirectory: code/
-      inlineScript: |
-        set -e # fail on error
-        python -m pip install -U --force-reinstall pip pip install azure-cli==2.35
-        az version
-    condition: eq(variables.AZ_CLI_CACHE_RESTORED, 'false')
   - task: UsePythonVersion@0
     displayName: Use Python >=3.8
     inputs:
@@ -38,6 +26,8 @@ jobs:
 
       az version
       az extension add -n ml
+      az extension update -n ml
+      az extension list
     displayName: 'Add AzureML Extension'
 
   - task: AzureCLI@2
