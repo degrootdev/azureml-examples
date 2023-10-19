@@ -1,14 +1,14 @@
 name: submit-azure-machine-learning-job
 
-trigger:
-- none
-
 variables:
   service-connection: 'Traineeship connection' # replace with your generic service connection name
   resource-group: 'MaRi-invest' # replace with your resource group name
   workspace: 'ML_Mari_invest' # replace with your workspace name
   endpoint_name: demand-forecast-1
   endpoint_type: online
+
+trigger:
+- none
 
 jobs:
 - job: SubmitAzureMLJob
@@ -17,51 +17,30 @@ jobs:
   pool:
     vmImage: ubuntu-latest
   steps:
-  - checkout: none
-  - task: UsePythonVersion@0
-    displayName: Use Python >=3.8
-    inputs:
-      versionSpec: '>=3.8'
+  - checkout: self
+    path: s/
+  - template: /Azure-devops/templates/create-connection-workspace.yml
+  
 
-  - bash: |
-      set -ex
+  # - template: /aml-cli-v2/create-deployment.yml
+  #   parameters:
+  #     deployment_name: demand-forest-dp
+  #     deployment_file: mlops/azureml/deploy/online/online-deployment.yml
 
-      az version
-      az extension add -n ml
-      az extension update -n ml
-      az extension list
-    displayName: 'Add AzureML Extension'
+  # - task: AzureCLI@2
+  #   displayName: Create online/batch endpoint 
+  #   continueOnError: true
+  #   inputs: 
+  #     azureSubscription: $(service-connection) #needs to have access at the RG level 
+  #     scriptType: bash
+  #     scriptLocation: inlineScript
+  #     inlineScript: |
+  #       ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
+  #       echo $ENDPOINT_NAME $ENDPOINT_EXISTS
+  #       az ml $(endpoint_type)-endpoint list -g $(resource-group) -w $(workspace) -o tsv 
 
-  - task: AzureCLI@2
-    name: submit_azureml_job_task
-    displayName: Submit AzureML Job Task
-    inputs:
-      azureSubscription: $(service-connection)
-      workingDirectory: 'cli/jobs/pipelines-with-components/nyc_taxi_data_regression'
-      scriptLocation: inlineScript
-      scriptType: bash
-      inlineScript: |
-      
-        # submit component job and get the run name
-        job_name=$(az ml job create --file single-job-pipeline.yml -g $(resource-group) -w $(workspace) --query name --output tsv)
-
-        # Set output variable for next task
-        echo "##vso[task.setvariable variable=JOB_NAME;isOutput=true;]$job_name"
-
-  - task: AzureCLI@2
-    displayName: Create online/batch endpoint 
-    continueOnError: true
-    inputs: 
-      azureSubscription: $(service-connection) #needs to have access at the RG level 
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
-        echo $ENDPOINT_NAME $ENDPOINT_EXISTS
-        az ml $(endpoint_type)-endpoint list -g $(resource-group) -w $(workspace) -o tsv 
-
-        if [[ ENDPOINT_EXISTS -ne 1 ]]; then
-            az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -g $(resource-group) -w $(workspace)
-        else
-            echo "Endpoint exists"
-        fi
+  #       if [[ ENDPOINT_EXISTS -ne 1 ]]; then
+  #           az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -g $(resource-group) -w $(workspace)
+  #       else
+  #           echo "Endpoint exists"
+  #       fi
