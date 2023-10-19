@@ -7,6 +7,8 @@ variables:
   service-connection: 'Traineeship connection' # replace with your generic service connection name
   resource-group: 'MaRi-invest' # replace with your resource group name
   workspace: 'ML_Mari_invest' # replace with your workspace name
+  endpoint_name: demand-forecast-1
+  endpoint_type: online
 
 jobs:
 - job: SubmitAzureMLJob
@@ -45,3 +47,21 @@ jobs:
 
         # Set output variable for next task
         echo "##vso[task.setvariable variable=JOB_NAME;isOutput=true;]$job_name"
+
+  - task: AzureCLI@2
+    displayName: Create online/batch endpoint 
+    continueOnError: true
+    inputs: 
+      azureSubscription: $(service-connectio) #needs to have access at the RG level 
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
+        echo $ENDPOINT_NAME $ENDPOINT_EXISTS
+        az ml $(endpoint_type)-endpoint list -o tsv
+
+        if [[ ENDPOINT_EXISTS -ne 1 ]]; then
+            az ml $(endpoint_type)-endpoint create --name $(endpoint_name)
+        else
+            echo "Endpoint exists"
+        fi
