@@ -58,10 +58,10 @@ jobs:
       inlineScript: |
         ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
         echo $ENDPOINT_NAME $ENDPOINT_EXISTS
-        az ml $(endpoint_type)-endpoint list -o tsv
+        az ml $(endpoint_type)-endpoint list -g $(resource-group) -w $(workspace) -o tsv 
 
         if [[ ENDPOINT_EXISTS -ne 1 ]]; then
-            az ml $(endpoint_type)-endpoint create --name $(endpoint_name)
+            az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -g $(resource-group) -w $(workspace)
         else
             echo "Endpoint exists"
         fi
